@@ -10,14 +10,14 @@ import org.testng.Assert;
 
 import pages.LoginPage;
 
-public class LoginDay03 {
+public class Login02 {
 	static String baseURL = null;
 	static WebDriver driver = null;
 	/**
      * 
      * @author Ngoc Vu
      * ************** 
-     * This TestCase will use test dataProvider
+     * This TestCase will read data from Excel:
      * 1, Login successfully. Verify the title of the Homepage
      * 2, Login Fail: invalid username and valid password, a pop-up "user or password is not valid"
      * 3, Login Fail: valid username and invalid password, a pop-up "user or password is not valid"
@@ -29,10 +29,9 @@ public class LoginDay03 {
 		/*	System.setProperty("webdriver.ie.driver", Util.PROJECT_PATH+"//drivers/IEDriverServer.exe");
 		driver = new InternetExplorerDriver();*/
 		
-		baseURL = Util.BASE_URL;
 		driver.manage().timeouts()
 		.implicitlyWait(Util.WAIT_TIME, TimeUnit.SECONDS);
-		driver.get(baseURL + "/V4/");
+		driver.get(Util.BASE_URL + "/V4/");
 	}
 	public static void main(String[] args) {
 		String username, password;
