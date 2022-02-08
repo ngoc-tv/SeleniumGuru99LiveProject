@@ -12,11 +12,13 @@ public class LoginPage {
 		driver = driver1;
 	}
 	public WebElement userName() {
-			element = driver.findElement(By.name("uid"));
-			return element;
-		}
+	    driver.findElement(By.name("uid")).clear(); // Good practice to clear a field before use
+		element = driver.findElement(By.name("uid"));
+		return element;
+	}
 	
 	public WebElement password() {
+	    driver.findElement(By.name("password")).clear(); // Good practice to clear a field before use
 		element = driver.findElement(By.name("password"));
 		return element;
 	}
