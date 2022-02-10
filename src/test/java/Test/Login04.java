@@ -1,11 +1,13 @@
 package Test;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
-import org.apache.commons.io.FileUtils;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoAlertPresentException;
@@ -16,24 +18,22 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
-import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import pages.LoginPage;
 
-public class Login03 {
+public class Login04 {
 	static WebDriver driver = null;
 	/**
      * 
      * @author Ngoc Vu
      *        ************** 
      *        This TestCase will use dataProvider of TestNG. 
-     *        DataProvider get data from excel.
+     *        DataProvider DO NOT get data from excel. Create data for DataProvider
      *        1, Login successful
-     *			2 check manager id on the page.
+     *			2, check the dynamic text manager id on the page.
      */		
 	@BeforeMethod
 	public static void setUpTest() {
@@ -42,6 +42,25 @@ public class Login03 {
 		driver.manage().timeouts()
 		.implicitlyWait(Util.WAIT_TIME, TimeUnit.SECONDS);
 		driver.get(Util.BASE_URL + "/V4/");
+	}
+	
+	@DataProvider(name = "test1Data")
+	public Object[][] getData() {
+		Object[][] data = new Object[4][2];
+
+		// 1st row
+		data[0][0] = Util.USER_NAME;
+		data[0][1] = Util.PASSWD;
+		//2nd row
+		data[1][0] = "invalid";
+		data[1][1] = "valid";
+		//3rd row
+		data[2][0] = "valid";
+		data[2][1] = "invalid";
+		//4th row
+		data[3][0] = "invalid";
+		data[3][1] = "invalid";
+		return data;
 	}
 	@Test(dataProvider = "test1Data")
 	public static void login(String userName, String passWord) {
@@ -57,16 +76,28 @@ public class Login03 {
 			Alert alert = driver.switchTo().alert();
 			String actualAlert = alert.getText();
 			alert.accept();
-			
 			//check actual alert text to match expected text
 			Assert.assertEquals(Util.EXPECT_ALERT, actualAlert);
+			
 		} catch(NoAlertPresentException Ex) {
 			String actTitle = driver.getTitle();
 			Assert.assertEquals(Util.EXPECT_TITLE, actTitle);
 			
 			//check Manger Id shown after login successfully.
-			List<WebElement> l = driver.findElements(By.xpath("//td[contains(text(),'Manger Id : " + Util.USER_NAME + "')]"));
-			Assert.assertEquals(l.size(), 1);
+			// Get text displayes on login page 
+			String pageText = driver.findElement(By.tagName("tbody")).getText();
+
+			// Extract the dynamic text mngrXXXX on page		
+			String[] parts = pageText.split(Util.PATTERN);
+			String dynamicText = parts[1];
+
+			// Check that the dynamic text is of pattern mngrXXXX
+			// First 4 characters must be "mngr"
+			assertTrue(dynamicText.substring(1, 5).equals(Util.FIRST_PATTERN));
+			// remain stores the "XXXX" in pattern mngrXXXX
+			String remain = dynamicText.substring(dynamicText.length() - 4);
+			// Check remain string must be numbers;
+			assertTrue(remain.matches(Util.SECOND_PATTERN));
 			
 			//Take Screenshot of the output
 			File srcFile= ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
@@ -80,15 +111,10 @@ public class Login03 {
 		}
 	}
 	
-	@DataProvider(name = "test1Data")
-	public Object[][] getData() {
-		Object data[][] = Util.getDataFromExcel(Util.PROJECT_PATH + Util.FILE_PATH, Util.SHEET_NAME);
-		return data;
-	}
+	
 	
 	@AfterMethod
 	public static void tearDownTest() {
 		driver.quit();
 	}
-	
 }

@@ -22,6 +22,11 @@ public class Util {
 	public static final String EXPECT_TITLE ="Guru99 Bank Manager HomePage";
 	public static final String EXPECT_ALERT ="User or Password is not valid";
 	
+	//For Dynamic text in Homepage
+	public static final String PATTERN = ":";
+    public static final String FIRST_PATTERN = "mngr";
+    public static final String SECOND_PATTERN = "[0-9]+";
+	
 	/**
 	 * @author: Ngoc Vu
 	 * This method reads the data from the Sheet name "Sheet1" of file
