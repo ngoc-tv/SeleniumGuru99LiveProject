@@ -36,7 +36,7 @@ public class Login02 {
 	public static void main(String[] args) {
 		String username, password;
 		
-		String[][] testData = Util.getDataFromExcel(Util.PROJECT_PATH + Util.FILE_PATH, Util.SHEET_NAME);
+		String[][] testData = getDataFromExcel(Util.PROJECT_PATH + Util.FILE_PATH, Util.SHEET_NAME);
 		
 		for(int i=0; i< testData.length; i++) {
 			setUpTest();
@@ -67,6 +67,25 @@ public class Login02 {
 			}
 			driver.quit();
 		}
+	}
+	public static String[][] getDataFromExcel(String excelPath, String sheetName) {
+		ExcelUtils excel = new ExcelUtils(excelPath, sheetName);
+		
+		int rowCount = excel.getRowCount();
+		int colCount = excel.getColCount();
+		
+		String data[][] = new String[rowCount-1][colCount]; 
+		
+		for(int i=1 ; i < rowCount; i++) {
+			for(int j=0; j< colCount; j++){
+			 String cellData =	excel.getCellDataString(i, j);
+			 //System.out.print("testData " + cellData + " | ");
+			 data[i-1][j] = cellData;
+			}
+			System.out.println();
+		}
+		return data;
+		
 	}
 	
 }

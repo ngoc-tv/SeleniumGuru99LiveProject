@@ -43,6 +43,40 @@ public class Login03 {
 		.implicitlyWait(Util.WAIT_TIME, TimeUnit.SECONDS);
 		driver.get(Util.BASE_URL + "/V4/");
 	}
+	
+	/**
+	 * @author: Ngoc Vu
+	 * This method reads the data from the Sheet name "Sheet1" of file
+	 * "excel/data.xls"
+	 * 
+	 * @return a 2 dimensions array to store all the test data read from excel
+	 *
+	 */
+	public static String[][] getDataFromExcel(String excelPath, String sheetName) {
+		ExcelUtils excel = new ExcelUtils(excelPath, sheetName);
+		
+		int rowCount = excel.getRowCount();
+		int colCount = excel.getColCount();
+		
+		String data[][] = new String[rowCount-1][colCount]; 
+		
+		for(int i=1 ; i < rowCount; i++) {
+			for(int j=0; j< colCount; j++){
+			 String cellData =	excel.getCellDataString(i, j);
+			 //System.out.print("testData " + cellData + " | ");
+			 data[i-1][j] = cellData;
+			}
+			System.out.println();
+		}
+		return data;
+	}
+	
+	@DataProvider(name = "test1Data")
+	public Object[][] getData() {
+		Object data[][] = getDataFromExcel(Util.PROJECT_PATH + Util.FILE_PATH, Util.SHEET_NAME);
+		return data;
+	}
+	
 	@Test(dataProvider = "test1Data")
 	public static void login(String userName, String passWord) {
 		
@@ -80,11 +114,7 @@ public class Login03 {
 		}
 	}
 	
-	@DataProvider(name = "test1Data")
-	public Object[][] getData() {
-		Object data[][] = Util.getDataFromExcel(Util.PROJECT_PATH + Util.FILE_PATH, Util.SHEET_NAME);
-		return data;
-	}
+	
 	
 	@AfterMethod
 	public static void tearDownTest() {
